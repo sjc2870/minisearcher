@@ -1,0 +1,51 @@
+/*************************************************************************
+ > File Name: Test.cc
+ > Author: SJC
+ > Mail: 1123305914@qq.com 
+ > Created Time: Sun 04 Aug 2019 09:22:24 PM PDT
+ ************************************************************************/
+
+#include<iostream>
+#include <string>
+using std::string;
+using std::cout;
+using std::endl;
+using std::cin;
+//思路：查看两个相邻字符是否连续，如果连续，吧前一个加入结果串，在连续字符串结束时把连续串的最后
+//一个字符加入结果串。
+int main(int argc,char* argv[]){
+	string s;
+	cout << "请输入欲处理的字符串：" << endl;
+	cin >> s;
+	string ret;
+	int n = 1;
+	bool isContinous = false;
+	for(int i = 0;i<=s.length()-2;++i){
+		if(s[i]+1==s[i+1]){
+			//如果相邻两个字母连续，那么把前一个加入结果串
+			isContinous = true;
+			++n;
+			ret += s[i];
+			if(i==s.length()-2){
+				//如果是末尾字符串连续，那么要把最后一个字母加入结果串
+				ret+=s[i+1];
+			}
+		}else{
+			//如果不连续
+			if(isContinous == true){
+				//如果刚才是连续的，那么把后面一个字母加入结果串
+				ret+=s[i];
+				isContinous = false;
+			}
+		}
+		if(i==s.length()-2){
+			//如果达到了字符串末尾
+			if(n>1){
+				cout << ret << endl;
+			}else{
+				cout << "no continous string" << endl;
+			}
+		}
+	}
+}
+
