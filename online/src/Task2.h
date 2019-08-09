@@ -3,19 +3,22 @@
 #include "WordQuery.h"
 #include "cppjieba/Jieba.hpp"
 #include "Config.h"
+#include "Redis.h"
 using namespace cppjieba;
 namespace wd{
 
 class Task2{
 public:
-Task2(const string&,const TcpConnectionPtr&,Jieba &,Config&);
+Task2(const string&,const TcpConnectionPtr&,Jieba &,WordQuery&,Redis*);
 void process();
+string getReturnFromRedis();
+void setRedis(string value);
 private:
 string m_msg;
 wd::TcpConnectionPtr m_conn;
 Jieba &m_jieba;
-Config &m_config;
-WordQuery m_wordquery;
+WordQuery& m_wordquery;
+Redis* m_pRedis;
 };
 
 }//end of namespace wd

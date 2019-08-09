@@ -8,6 +8,8 @@
 #include "TcpServer.h"
 #include "Config.h"
 #include "Task2.h"
+#include "WordQuery.h"
+#include "Redis.h"
 
 #include <unistd.h>
 #include <stdio.h>
@@ -17,7 +19,6 @@ using std::cout;
 using std::endl;
 using std::string;
 using wd::Task2;
-
 wd::Threadpool * gThreadpool = nullptr;
 
 wd::Config config("../conf/myconf.conf");
@@ -32,7 +33,10 @@ const char* const STOP_WORD_PATH = "./dict/stop_words.utf8";
         USER_DICT_PATH,
         IDF_PATH,
         STOP_WORD_PATH);
- 
+wd::WordQuery wordquery(config,jieba);
+
+wd::Redis* wd::Redis::m_pInstance = nullptr;
+wd::Redis* predis = wd::Redis::getInstance();
 //回调函数体现了扩展性
 void onConnection(const wd::TcpConnectionPtr & conn)
 {
@@ -51,7 +55,7 @@ void onMessage(const wd::TcpConnectionPtr & conn)
 	//encode
 	//::sleep(2);//碰到需要长时间的处理时，响应速度会降下来
 	//conn->send(msg);
-	Task2 task(msg, conn,jieba,config);
+	Task2 task(msg, conn,jieba,wordquery,predis);
 
 	gThreadpool->addTask(std::bind(&Task2::process, task));
 }
@@ -61,7 +65,6 @@ void onClose(const wd::TcpConnectionPtr & conn)
 	cout << "onClose...." << endl;
 	cout << conn->toString() << " has closed!" << endl;
 }
-
 int main(void)
 {
 #if 1
@@ -70,7 +73,6 @@ int main(void)
 	
 	gThreadpool = &threadpool;
 #endif
-
 #if 1
 	wd::TcpServer server("192.168.4.130", 8888);
 
